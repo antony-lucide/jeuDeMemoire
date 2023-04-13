@@ -10,6 +10,7 @@ int button2;
 int button3;
 int longueur = LONG;
 int score = 0;
+int niveau = 1;
 
 int led_pins[4] = {8,9,10};
 
@@ -23,7 +24,9 @@ void setup()
 void loop()
 {
   lcd.setCursor(0, 0);
-  lcd.print("Score: "+ String(score)+ "     ");
+  lcd.print("Score: "+ String(score)+ " Nv: "+ String(niveau));
+
+  delay(1000);
  
   int s[longueur];
   
@@ -60,9 +63,8 @@ void loop()
 
 int reponse(int *sol, int l) 
 {
-  lcd.setCursor(0, 0);
+  lcd.setCursor(0, 1);
   lcd.print("Reponse        ");
-  lcd.setCursor(0, 4);
   
   // Liste qui va recevoir la reponse du joueur et index marquant la position dans la sequence.
   int rep[l];
@@ -111,6 +113,6 @@ int reponse(int *sol, int l)
     
     delay(100);
   }
-  // Retourne 1 si la sequence est entrée sans erreur.
+  // Retourne 1 si la sequence est entré sans erreur.
   return 1;
 }
