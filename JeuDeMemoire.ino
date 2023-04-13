@@ -1,13 +1,15 @@
 #include <LiquidCrystal.h>
-#include "DHT.h"
 
 #define BUTTON1 11
 #define BUTTON2 12
 #define BUTTON3 13
+#define LONG 4
 
 int button1;
 int button2;
 int button3;
+int longueur = LONG;
+int score = 0;
 
 int led_pins[4] = {8,9,10};
 
@@ -20,44 +22,54 @@ void setup()
 
 void loop()
 {
-
   lcd.setCursor(0, 0);
-  lcd.print("Jeu de Memoire");
+  lcd.print("Score: "+ String(score)+ "     ");
+ 
+  int s[longueur];
   
-  suite();
-  reponse();
+  // Genere une suite de nombre entre 0 et 2 et allume les led correspondantes.
+  for (int i = 0; i < longueur; i++) {
+  	s[i] = rand() %3;
+    
+    digitalWrite(led_pins[s[i]], HIGH);
+  	delay(700);
+  	digitalWrite(led_pins[s[i]], LOW);
+    delay(300);
+  }
   
-  delay(10);
+  int resultat  = reponse(s, longueur);
+  
+  // Affiche message d'erreur ou succes en fonction du retour de la fonction reponse.
+  if (resultat == 0) {
+    score = 0;
+    longueur = LONG;
+  	lcd.setCursor(0, 1);
+  	lcd.print("Incorrect        ");
+  }
+  else {
+    score++;
+    longueur++;
+  	lcd.setCursor(0, 1);
+  	lcd.print("Correct        ");
+  }
+  
+  delay(1000);
+  lcd.setCursor(0, 1);
+  lcd.print("              ");
 }
 
-void suite()
-{
-  int a = rand() %3;
-  int b = rand() %3;
-  int c = rand() %3;
-  
-
-  digitalWrite(led_pins[a], HIGH);
-  delay(2000);
-  digitalWrite(led_pins[a], LOW);
-  
-  digitalWrite(led_pins[b], HIGH);
-  delay(2000);
-  digitalWrite(led_pins[b], LOW);
-  
-  digitalWrite(led_pins[c], HIGH);
-  delay(2000);
-  digitalWrite(led_pins[c], LOW);
-}
-
-void reponse() 
+int reponse(int *sol, int l) 
 {
   lcd.setCursor(0, 0);
   lcd.print("Reponse        ");
+  lcd.setCursor(0, 4);
   
+  // Liste qui va recevoir la reponse du joueur et index marquant la position dans la sequence.
+  int rep[l];
   int index = 0;
   
-  while (index < 3) {
+  // Recupere les inputs tant que l'index n'est pas a la fin de la sequence.
+  while (index < l) {
     
     button1 = digitalRead(BUTTON1);
   	button2 = digitalRead(BUTTON2);
@@ -65,26 +77,40 @@ void reponse()
     
     if (button1 == HIGH) {
       digitalWrite(led_pins[0], HIGH);
-      delay(1000);
+      delay(200);
+      
       digitalWrite(led_pins[0], LOW);
+      rep[index] = 0;
       index++;
     }
 
     if (button2 == HIGH) {
       digitalWrite(led_pins[1], HIGH);
-      delay(1000);
-      index++;
+      delay(200);
+      
       digitalWrite(led_pins[1], LOW);
+      rep[index] = 1;
+      index++;
     }
 
     if (button3 == HIGH) {
       digitalWrite(led_pins[2], HIGH);
-      delay(1000);
-      index++;
+      delay(200);
+      
       digitalWrite(led_pins[2], LOW);
+      rep[index] = 2;
+      index++;
     }
     
-    lcd.setCursor(0, 1);
-  	lcd.print(index);
-  } 
+    // Retourne 0 si le bouton appuyé ne correspond pas a la sequence.
+    if (index >= 1) {
+      if (rep[index-1] != sol[index-1]) {
+      	return 0;
+      }
+    }
+    
+    delay(100);
+  }
+  // Retourne 1 si la sequence est entrée sans erreur.
+  return 1;
 }
