@@ -11,6 +11,7 @@ int button3;
 int longueur = LONG;
 int score = 0;
 int niveau = 1;
+int temp = 700;
 
 int led_pins[4] = {8,9,10};
 
@@ -35,9 +36,9 @@ void loop()
   	s[i] = rand() %3;
     
     digitalWrite(led_pins[s[i]], HIGH);
-  	delay(700);
+  	delay(temp);
   	digitalWrite(led_pins[s[i]], LOW);
-    delay(300);
+   	delay(300);
   }
   
   int resultat  = reponse(s, longueur);
@@ -59,7 +60,14 @@ void loop()
   delay(1000);
   lcd.setCursor(0, 1);
   lcd.print("              ");
+
+//Affiche le résultat 
+ if (score == 5) {
+  niveau++;
+  temp = 600;
+ }
 }
+
 
 int reponse(int *sol, int l) 
 {
