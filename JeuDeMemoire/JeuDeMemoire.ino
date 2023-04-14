@@ -113,6 +113,6 @@ int reponse(int *sol, int l)
     
     delay(100);
   }
-  // Retourne 1 si la sequence est entré sans erreur.
+  // Retourne 1 si la sequence est entrée sans erreur.
   return 1;
 }
