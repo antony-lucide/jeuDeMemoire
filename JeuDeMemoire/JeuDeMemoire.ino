@@ -9,7 +9,7 @@ int button1;
 int button2;
 int button3;
 int longueur = LONG;
-int score = 0;
+int score = 4;
 int niveau = 1;
 int temp = 700;
 
@@ -63,7 +63,7 @@ void loop()
 
  if (score == 5) {
   niveau++;
-  temp;
+  temp = 600;
  }
 }
 
