@@ -9,7 +9,7 @@ int button1;
 int button2;
 int button3;
 int longueur = LONG;
-int score = 4;
+int score = 0;
 int niveau = 1;
 int temp = 700;
 
@@ -61,6 +61,7 @@ void loop()
   lcd.setCursor(0, 1);
   lcd.print("              ");
 
+//Affiche le résultat 
  if (score == 5) {
   niveau++;
   temp = 600;
