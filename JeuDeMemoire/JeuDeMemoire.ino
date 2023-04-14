@@ -1,4 +1,4 @@
-#include <LiquidCrystal.h>
+#include <Adafruit_LiquidCrystal.h>
 
 #define BUTTON1 11
 #define BUTTON2 12
@@ -14,7 +14,7 @@ int niveau = 1;
 
 int led_pins[4] = {8,9,10};
 
-LiquidCrystal lcd(0, 1, 2, 3, 4, 5);
+Adafruit_LiquidCrystal lcd(0, 1, 2, 3, 4, 5);
 
 void setup()
 {
@@ -59,7 +59,12 @@ void loop()
   delay(1000);
   lcd.setCursor(0, 1);
   lcd.print("              ");
+
+ if (score == 5) {
+  niveau++;
+ }
 }
+
 
 int reponse(int *sol, int l) 
 {
