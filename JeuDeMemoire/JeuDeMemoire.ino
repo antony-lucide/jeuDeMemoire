@@ -3,12 +3,15 @@
 #define BUTTON1 11
 #define BUTTON2 12
 #define BUTTON3 13
+#define BUZZERPIN A3
 #define LONG 4
+#define TPS 700
 
 int button1;
 int button2;
 int button3;
 int longueur = LONG;
+int del = TPS;
 int score = 0;
 int niveau = 1;
 
@@ -18,6 +21,7 @@ LiquidCrystal lcd(0, 1, 2, 3, 4, 5);
 
 void setup()
 {
+   pinMode(BUZZERPIN, OUTPUT);
   lcd.begin(16, 2);
 }
 
@@ -35,16 +39,20 @@ void loop()
   	s[i] = rand() %3;
     
     digitalWrite(led_pins[s[i]], HIGH);
-  	delay(700);
+  	delay(del);
   	digitalWrite(led_pins[s[i]], LOW);
-    delay(300);
+    delay(200);
   }
   
   int resultat  = reponse(s, longueur);
   
   // Affiche message d'erreur ou succes en fonction du retour de la fonction reponse.
+  
+  // Reset du score et du niveau en cas d'erreur
   if (resultat == 0) {
     score = 0;
+    niveau = 1;
+    del = TPS;
     longueur = LONG;
   	lcd.setCursor(0, 1);
   	lcd.print("Incorrect        ");
@@ -54,6 +62,14 @@ void loop()
     longueur++;
   	lcd.setCursor(0, 1);
   	lcd.print("Correct        ");
+
+    // Passe au niveau suivant tout les 5 pts et augmente la vitesse de la sequence. 
+    if (score%5 == 0) {
+      niveau++;
+      if (delai > 100) {
+        delai = delai - 100;
+      }
+    }
   }
   
   delay(1000);
@@ -70,7 +86,7 @@ int reponse(int *sol, int l)
   int rep[l];
   int index = 0;
   
-  // Recupere les inputs tant que l'index n'est pas a la fin de la sequence.
+  // Recupere les inputs et les ajoutent a la reponse tant que l'index n'est pas a la fin de la sequence.
   while (index < l) {
     
     button1 = digitalRead(BUTTON1);
@@ -104,9 +120,12 @@ int reponse(int *sol, int l)
       index++;
     }
     
-    // Retourne 0 si le bouton appuyé ne correspond pas a la sequence.
+    // Active le buzzer et retourne 0 si le bouton appuyé ne correspond pas a la sequence.
     if (index >= 1) {
       if (rep[index-1] != sol[index-1]) {
+        tone(BUZZERPIN, 500);
+        delay(100);
+        noTone(BUZZERPIN);
       	return 0;
       }
     }
